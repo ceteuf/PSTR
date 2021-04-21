@@ -1,13 +1,15 @@
 # %%
 from utils import MaClasse
 import pandas as pd 
-
+import numpy as np
+from scipy.linalg import cholesky, inv
 # %%
 def checkIfElsInColDf(cols, lst):
     for el in lst:
         if not el in cols:
             return False
     return True
+
 
 class PSTR(object):
 
@@ -40,22 +42,38 @@ class PSTR(object):
         self.t = len(self.t_dim)
         self.i = len(self.i_dim)
 
+        self.vY = data[dep].values # independante
+        self.mX = data[indeps].values # dépendantes
+        self.mK = data[indeps_k].values
+        self.mQ = data[tvars].values
+
+
+        coln = np.transpose([np.arange(1, self.i+1)] * self.t)
+        coln = np.reshape(coln, coln.size)
+        self.coln = coln
+        
+        vYb, mXb = np.zeros((self.i * self.t)), np.array([]).reshape(0, self.mX.shape[1])
+        for ix in range(1, self.i+1, 1):
+            tmp = (coln == ix)
+            vYb[tmp] = self.vY[tmp] - np.mean(self.vY[tmp])
+            val = np.transpose(np.transpose(self.mX[tmp]) - np.mean(np.transpose(self.mX), axis=1, keepdims=True))
+            mXb = np.vstack([mXb, val])
+        self.mXb = mXb
+        self.vYb = vYb
+
 
 
 # %%
 
 # %%
-df = pd.read_csv("hansen99.csv")
+df = pd.read_csv("data/hansen99.csv")
 # %%
 
 new_pstr = PSTR(data=df,
                 dep='inva', 
-                indeps=["dt_75", "dt_76", "dt_77", "dt_78"], 
+                indeps=list(df.columns[3:21]), 
                 indeps_k=['vala','debta','cfa','sales'],
                 tvars=['vala'],
                 timeVar="year",
                 indiVar="cusip")
 # %%
-new_pstr.i
-# %%
-df["year"]
