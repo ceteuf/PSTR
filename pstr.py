@@ -27,8 +27,9 @@ class PSTR(object):
         assert isinstance(indeps_k, list) & checkIfElsInColDf(data.columns, indeps_k), "Indeps_k doit être un liste contenant des noms de colonnes valides !"
         self.indeps_k = indeps_k
 
-        assert isinstance(tvars, list) & checkIfElsInColDf(data.columns, tvars), "Tvars doit être un liste contenant des noms de colonnes valides !"
-        self.tvars = tvars
+            # correction : tvars est une liste de numéro de colonnes des variables de transitions potentielles
+        # assert isinstance(tvars, list) & checkIfElsInColDf(data.columns, tvars), "Tvars doit être un liste contenant des noms de colonnes valides !"
+        # self.tvars = tvars
 
         assert isinstance(timeVar, str)
         self.timeVar = timeVar
@@ -46,6 +47,7 @@ class PSTR(object):
         self.mX = data[indeps].values # dépendantes
         self.mK = data[indeps_k].values
         self.mQ = data[tvars].values
+        self.mQ_name = list(df.iloc[:, tvars])
 
 
         coln = np.transpose([np.arange(1, self.i+1)] * self.t)
