@@ -14,7 +14,7 @@ def checkIfElsInColDf(cols, lst):
 class PSTR(object):
 
     def __init__(self, data, dep, indeps, indeps_k, tvars, timeVar, indiVar):
-
+        
         assert isinstance(data, pd.DataFrame), "data doit être un dataframe !"
         self.data = data
 
@@ -134,9 +134,8 @@ new_pstr = PSTR(data=df,
                 timeVar="year",
                 indiVar="cusip")
 # %%
-new_pstr.mXb.shape
-# %%
-new_pstr.lintest()
+new_pstr.tmp
+# %22new_pstr.lintest()
 
 # %%
 new_pstr.invXX[0:5, 0:5]
