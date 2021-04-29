@@ -15,6 +15,8 @@ class PSTR(object):
 
     def __init__(self, data, dep, indeps, indeps_k, tvars, timeVar, indiVar):
 
+        # ranger data : groupby indiv puis croissant par années
+
         assert isinstance(data, pd.DataFrame), "data doit être un dataframe !"
         self.data = data
 
@@ -27,7 +29,7 @@ class PSTR(object):
         assert isinstance(indeps_k, list) & checkIfElsInColDf(data.columns, indeps_k), "Indeps_k doit être un liste contenant des noms de colonnes valides !"
         self.indeps_k = indeps_k
 
-            # correction : tvars est une liste de numéro de colonnes des variables de transitions potentielles
+        # correction : tvars est une liste de numéro de colonnes des variables de transitions potentielles
         # assert isinstance(tvars, list) & checkIfElsInColDf(data.columns, tvars), "Tvars doit être un liste contenant des noms de colonnes valides !"
         # self.tvars = tvars
 
@@ -46,8 +48,9 @@ class PSTR(object):
         self.vY = data[dep].values # independante
         self.mX = data[indeps].values # dépendantes
         self.mK = data[indeps_k].values
-        self.mQ = data[tvars].values
-        self.mQ_name = list(df.iloc[:, tvars])
+        self.mQ_name = list(data.iloc[:, tvars])
+        self.mQ = data[self.mQ_name].values
+        # self.mQ = data[tvars].values
 
 
         coln = np.transpose([np.arange(1, self.i+1)] * self.t)
@@ -75,7 +78,7 @@ new_pstr = PSTR(data=df,
                 dep='inva', 
                 indeps=list(df.columns[3:21]), 
                 indeps_k=['vala','debta','cfa','sales'],
-                tvars=['vala'],
+                tvars=[16],
                 timeVar="year",
                 indiVar="cusip")
 # %%
