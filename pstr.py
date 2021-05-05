@@ -57,14 +57,22 @@ class PSTR(object):
         coln = np.reshape(coln, coln.size)
         self.coln = coln
         
-        vYb, mXb = np.zeros((self.i * self.t)), np.array([]).reshape(0, self.mX.shape[1])
+        vYb = np.zeros((self.i * self.t))
+        # mXb = np.array([]).reshape(0, self.mX.shape[1])
+        mXb = np.zeros((self.i*self.t, self.mX.shape[1]))
         for ix in range(1, self.i+1, 1):
             tmp = (coln == ix)
             vYb[tmp] = self.vY[tmp] - np.mean(self.vY[tmp])
-            val = np.transpose(np.transpose(self.mX[tmp]) - np.mean(np.transpose(self.mX), axis=1, keepdims=True))
-            mXb = np.vstack([mXb, val])
+            # temp_val = self.mX[tmp, :] - np.mean(np.transpose(self.mX[tmp, :]), axis=0, keepdims=True)
+            #tmptmp1 = np.mean(np.transpose(self.mX[tmp,:]), axis=1, keepdims=True)
+            val = np.transpose(np.transpose(self.mX[tmp,:]) - np.mean(np.transpose(self.mX[tmp,:]), axis=1, keepdims=True)  )
+            mXb[tmp, :] = val
+        
         self.mXb = mXb
         self.vYb = vYb
+        self.vY = self.vY[:, np.newaxis]
+
+
 
 
 

@@ -52,11 +52,14 @@ def EstPSTR(use, im=1, iq=None, par=None, useDelta=False, vLower=2, vUpper=2, me
         raise ValueError("The argument 'use' is not an object of class 'PSTR'")
 
     ret = use 
-    iT , iN = use.t , use.i 
+    iT = use.i
+    iN = use.t 
 
     # get the data here
-    vY , vYb = use.vY , use.vYb
-    mX , mXb = use.mX , use.mXb
+    vY  = use.vY
+    vYb = use.vYb
+    mX  = use.mX
+    mXb = use.mXb
     mK = use.mK
     ik = mK.shape[1]
 
@@ -78,13 +81,13 @@ def EstPSTR(use, im=1, iq=None, par=None, useDelta=False, vLower=2, vUpper=2, me
         if type(iq) == list :
             raise ValueError("Sorry! We only support the one transition variable case.")
 
-        vQ = use.mQ[:,iq].reshape((use.mQ[:,iq].shape[0],1))
+        vQ = use.mQ[:,iq-1].reshape((use.mQ[:,iq-1].shape[0],1))
         mQ = vQ.transpose()
 
         def ResiduleSumSquare(vp) :
             # vp : variable "double" en R --> devra être donné par un liste / array a voir
             # vp[1] = log(gamma) or delta
-            vg = fTF(vx=mQ, gamma= vp[0], vc = )
+            vg = fTF(vx=mQ, gamma= vp[0], vc =vp[1:len(vp)] )
             mXX = mK * vg 
             # spliting to take account for the panel structure : 3D array
             # iK arrays in which sub arrays have a shape of (iT, iN) 
@@ -101,34 +104,9 @@ def EstPSTR(use, im=1, iq=None, par=None, useDelta=False, vLower=2, vUpper=2, me
 
 # %%
 
-l = [-0.462,0]
-
-b = new_pstr.mQ
-
-a = fTF(b, np.exp(l[0]), l[1:len(l)])
-
-
-
-
-# %%
-res = new_pstr.mK * a 
-# %%
-print(a.shape)
-print(new_pstr.mK.shape)
+EstPSTR(new_pstr,im=1,iq=1,useDelta=True,par=[-0.462,0], vLower=4, vUpper=4)
 
 
 # %%
 test = pd.read_csv("C:/Users/Pierre/Desktop/reasearch_ideas/econometics_code/pstr/data/test.csv",sep=";")
 
-#%%
-
-ik = new_pstr.mK.shape[1]
-iN=4 #iN
-iT=14 #iT
-
-atest = test[list(test)[-4:]].values
-
-#%%
-np.reshape(atest, (ik,iT) + (iN,))
-#%%
-atest.shape
